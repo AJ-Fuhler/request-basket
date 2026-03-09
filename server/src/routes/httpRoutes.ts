@@ -1,7 +1,6 @@
 import { basketController } from "../controllers/basketController";
 import type { Router } from 'express';
 
-
 export function registerHttpRoutes(router: Router) {
   // Homepage - serve React app
   // GET all user baskets

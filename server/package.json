@@ -17,7 +17,8 @@
     "express-ws": "^5.0.2",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.2.4",
-    "pg": "^8.20.0"
+    "pg": "^8.20.0",
+    "ws": "^8.19.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

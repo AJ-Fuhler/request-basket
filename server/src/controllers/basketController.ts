@@ -2,6 +2,24 @@ import type { Request, Response } from "express";
 import { mongoModel } from "../models/mongoModel";
 import { pgModel } from "../models/pgModel";
 import { type WebSocket } from "ws";
+import type { IncomingHttpHeaders } from "node:http";
+
+export interface RequestData {
+  endpoint: string;
+  method: string;
+  headers: IncomingHttpHeaders;
+  body: string;
+}
+
+const wsConnections = new Map();
+
+export function isEndpoint(endpoint: string | string[] | undefined): endpoint is string {
+  if (endpoint && typeof endpoint === "string") {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 export const basketController = {
   handleGetBaskets(req: Request, res: Response) {
@@ -15,66 +33,99 @@ export const basketController = {
 
   async handleGetBasketRequests(ws: WebSocket, req: Request) {
     const { endpoint } = req.params;
+    wsConnections.set(endpoint, ws);
 
-    console.log(req.params);
-
-    if (endpoint) {
-      const requests = await mongoModel.getBasketRequests(endpoint);
-      ws.send(requests);
+    ws.on('close', () => {
+      console.log('WS disconnected');
+    });
+  
+    if (isEndpoint(endpoint)) {
+      try {
+        const requests = await mongoModel.getBasketRequests(endpoint)
+        ws.send(requests);
+      } catch (e) {
+        let errorMsg = "Failed to get basket requests";
+        ws.send(errorMsg);
+      }
     } else {
-      ws.send([]);
+      let errorMsg = "Invalid or empty endpoint";
+      ws.send(errorMsg);
     }
   },
 
-  handleCreateNewBasket(req: Request, res: Response) {
+  async handleCreateNewBasket(req: Request, res: Response) {
     const { endpoint } = req.params;
 
-    // concurrent request to same endpoint by different user?
-    if (pgModel.basketExists(endpoint)) {
-      res.status(409).json({ message: "Endpoint name is invalid." });
+    if (isEndpoint(endpoint)) {
+      if (await pgModel.basketExists(endpoint)) {
+        res.status(409).json({ error: "Endpoint already taken. Please choose another endpoint." });
+      } else {
+
+        try {
+          pgModel.addNewBasket(endpoint);
+          res.status(200).json({ message: "endpoint is available", token: "..." });
+        } catch (e) {
+          res.status(400).json({ error: "Basket could not be created." });
+        }
+      }
     } else {
-      // Generate JWT token for user.
-      // This is stored locally in browser.
-      // If user tries to access same endpoint with different/altered token, respond with 401 message.
-      pgModel.addNewBasket(endpoint);
-      res.status(200).json({ message: "endpoint is available", token: "..." });
+      res.status(400).json({ error: "Invalid or empty endpoint." });
     }
   },
 
-  handleWebhookRequest(req: Request, res: Response) {
+  async handleWebhookRequest(req: Request, res: Response) {
     const { endpoint } = req.params;
-    // console.log(req.params);
+    const { token: sentToken } = req.body.token;
     const { method, headers, body } = req;
-    const timestamp = new Date();
-    const json = {
-      method: method,
-      headers: headers,
-      body: body,
-      timestamp: timestamp,
-    };
 
-    // mongoModel.addWebhookRequest(endpoint, json);
+    if (isEndpoint(endpoint)) {
 
-    // user -> `/baksets/1234abc` (websocket connection) -> add this connection to a list
-    // whenever a webhook request collects and stores request data,
-    // find the connection associated with the request's endpoint 
-    // send the request JSON to the user via associate websocket
+      const json: RequestData = {
+        endpoint,
+        method,
+        headers,
+        body,
+      };
+      
+      const savedToken = await pgModel.getBasketToken(endpoint);
 
-    // Send the newly created request to `/baskets/:endpoint`? via websocket?
-    // with ...?
-    // 
+      if (savedToken === sentToken) {
+        try {
+          mongoModel.addWebhookRequest(json);
+          const wsConnection = wsConnections.get(endpoint);
 
-    res.status(200);
+          if (wsConnection) {
+            wsConnection.send(JSON.stringify(json));
+          }
+
+          res.sendStatus(200);
+        } catch (e) {
+          res.sendStatus(400).json({ error: 'Webhook request failed.'});
+        }
+      } else {
+        res.status(400).json({ error: "Invalid basket token" });
+      }
+    } else {
+      res.status(400).json({ error: "Invalid or empty endpoint." });
+    }
   },
 
-  handleClearBasket(req: Request, res: Response) {
+  async handleClearBasket(req: Request, res: Response) {
     const { endpoint } = req.params;
 
-    if (pgModel.basketExists(endpoint)) {
-      pgModel.clearBasket(endpoint);
-      res.status(200);
+    if (isEndpoint(endpoint)) {
+      if (await pgModel.basketExists(endpoint)) {
+        try {
+          const { deletedCount } = await mongoModel.clearBasket(endpoint);
+          res.status(200).json({ deletedCount });
+        } catch (e) {
+          res.status(400).json({ error: "Basket could not be cleared." });
+        }
+      } else {
+        res.status(400).json({ error: "Basket doesn't exist!" });
+      }
     } else {
-      res.status(400).send({ message: "Basket doesn't exist!" });
-    }
+      res.status(400).json({ error: "Invalid basket endpoint" });
+    }  
   },
 };
