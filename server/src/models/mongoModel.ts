@@ -1,29 +1,27 @@
 import mongoose from "mongoose";
-import type { RequestData } from "../controllers/basketController";
-
-const { Schema } = mongoose;
-const requestSchema = new Schema({
-  endpoint: String,
-  method: String,
-  headers: [String],
-  body: String,
-});
+import type { RequestData } from "../types/requests";
+import { requestSchema } from "./mongoSchema";
 
 const Request = mongoose.model("Request", requestSchema);
 
 export const mongoModel = {
   async getBasketRequests(endpoint: string) {
-    const documents = await Request.find({ endpoint });
-    const requests = documents.map((document) => document.toJSON());
-    return JSON.stringify(requests);
+    try {
+      const documents = await Request.find({ endpoint });
+      return JSON.stringify(documents);
+    } catch (e) {
+      console.error(e);
+      throw new Error("Failed to retrieve basket");
+    }
   },
 
-  async addWebhookRequest(payload: RequestData) {
-    const newRequest = new Request(payload);
+  async addWebhookRequest(data: RequestData) {
+    const newRequest = new Request(data);
 
     try {
       await newRequest.save();
     } catch (e) {
+      console.error(e);
       throw new Error('Failed to save request to DB');
     }
   },
