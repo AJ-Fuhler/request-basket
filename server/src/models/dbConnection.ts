@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 
 export async function connectDBs() {
   await connectMongo();
-  console.log("PostgresqlDB connected");
+  console.log("MongoDB connected");
 }
 
 async function connectMongo() {

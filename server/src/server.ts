@@ -13,7 +13,7 @@ app.use(cors());
 
 const httpRouter = Router();
 registerHttpRoutes(httpRouter);
-app.use("/", httpRouter);
+app.use("/api/", httpRouter);
 
 async function main() {
   const server = app.listen(PORT, () => {
