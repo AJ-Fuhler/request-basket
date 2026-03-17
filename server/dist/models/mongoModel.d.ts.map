@@ -1,0 +1,1 @@
+{"version":3,"file":"mongoModel.d.ts","sourceRoot":"","sources":["../../src/models/mongoModel.ts"],"names":[],"mappings":"AAAA,OAAO,QAAQ,MAAM,UAAU,CAAC;AAChC,OAAO,KAAK,EAAE,WAAW,EAAE,MAAM,sBAAsB,CAAC;AAKxD,eAAO,MAAM,UAAU;gCACa,MAAM;;;;;;;;;;;;;;;;;;;4BAUV,WAAW;0BAWb,MAAM;CAQnC,CAAC"}

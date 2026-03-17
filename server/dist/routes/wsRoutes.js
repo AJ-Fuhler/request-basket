@@ -1,6 +1,5 @@
 import { basketController } from "../controllers/basketController.js";
-import type { Router } from 'express-ws';
-
 // export function registerWsRoutes(router: Router) {
 //   router.ws("/baskets/:endpoint", basketController.handleGetBasketRequests);
 // }
+//# sourceMappingURL=wsRoutes.js.map

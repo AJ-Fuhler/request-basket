@@ -1,4 +1,4 @@
-import { basketController } from "../controllers/basketController";
+import { basketController } from "../controllers/basketController.js";
 import type { Router } from 'express';
 
 export function registerHttpRoutes(router: Router) {

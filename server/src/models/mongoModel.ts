@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import type { RequestData } from "../types/requests";
-import { requestSchema } from "./mongoSchema";
+import type { RequestData } from "../types/requests.js";
+import { requestSchema } from "./mongoSchema.js";
 
 const Request = mongoose.model("Request", requestSchema);
 

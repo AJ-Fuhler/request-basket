@@ -1,0 +1,10 @@
+import { basketController } from "../controllers/basketController.js";
+export function registerHttpRoutes(router) {
+    // router.get("/baskets", basketController.handleGetBaskets);
+    // router.get("/", basketController.handleRedirectToBaskets);
+    router.get("/baskets/:endpoint", basketController.handleGetBasketRequests);
+    router.post("/baskets/create/:endpoint", basketController.handleCreateNewBasket);
+    router.all("/:endpoint", basketController.handleWebhookRequest);
+    router.put("/:endpoint/clear", basketController.handleClearBasket);
+}
+//# sourceMappingURL=httpRoutes.js.map

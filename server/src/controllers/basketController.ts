@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
-import { mongoModel } from "../models/mongoModel";
-import { pgModel } from "../models/pgModel";
-import type { RequestData } from "../types/requests";
+import { mongoModel } from "../models/mongoModel.js";
+import { pgModel } from "../models/pgModel.js";
+import type { RequestData } from "../types/requests.js";
 
 export const basketController = {
   // handleGetBaskets(req: Request, res: Response) {
