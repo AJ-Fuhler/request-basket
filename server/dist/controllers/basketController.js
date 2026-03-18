@@ -20,6 +20,7 @@ export const basketController = {
         }
     },
     async handleCreateNewBasket(req, res) {
+        console.log("in handleCreateNewBasket");
         const { endpoint } = req.params;
         let basketExists;
         try {
