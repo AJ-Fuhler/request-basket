@@ -1,5 +1,6 @@
 import { basketController } from "../controllers/basketController.js";
 export function registerHttpRoutes(router) {
+    console.log("[routes] Registering HTTP routes...");
     // router.get("/baskets", basketController.handleGetBaskets);
     // router.get("/", basketController.handleRedirectToBaskets);
     router.get("/baskets/:endpoint", basketController.handleGetBasketRequests);

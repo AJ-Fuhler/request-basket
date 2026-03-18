@@ -11,12 +11,17 @@ export const basketController = {
     // },
     handleSSEConnection(req, res) {
         const { endpoint } = req.params;
+        console.log(`[SSE] New connection request for endpoint: ${endpoint}`);
+        console.log(`[SSE] Accept header: ${req.headers.accept ?? '(none)'}`);
+        console.log(`[SSE] Full URL: ${req.originalUrl}`);
         res.setHeader("Content-Type", "text/event-stream");
         res.setHeader("Cache-Control", "no-cache");
         res.setHeader("Connection", "keep-alive");
         res.flushHeaders();
+        console.log(`[SSE] Headers flushed, client registered for: ${endpoint}`);
         sseManager.addClient(endpoint, res);
         req.on("close", () => {
+            console.log(`[SSE] Client disconnected from: ${endpoint}`);
             sseManager.removeClient(endpoint, res);
         });
     },
@@ -56,6 +61,7 @@ export const basketController = {
     },
     async handleWebhookRequest(req, res) {
         const { endpoint } = req.params;
+        console.log(`[webhook] ${req.method} /${endpoint} | Accept: ${req.headers.accept ?? '(none)'}`);
         const { method, headers, body } = req;
         const data = {
             endpoint,

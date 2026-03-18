@@ -2,6 +2,8 @@ import { basketController } from "../controllers/basketController.js";
 import type { Router } from 'express';
 
 export function registerHttpRoutes(router: Router) {
+  console.log("[routes] Registering HTTP routes...");
+
   // router.get("/baskets", basketController.handleGetBaskets);
 
   // router.get("/", basketController.handleRedirectToBaskets);

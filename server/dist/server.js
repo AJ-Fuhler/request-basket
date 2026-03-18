@@ -8,6 +8,11 @@ const app = express();
 const PORT = 3000;
 app.use(express.json());
 app.use(cors());
+// Debug: log every incoming request before routing
+app.use((req, _res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path} | Accept: ${req.headers.accept ?? '(none)'}`);
+    next();
+});
 const httpRouter = Router();
 registerHttpRoutes(httpRouter);
 app.use("/api/", httpRouter);
