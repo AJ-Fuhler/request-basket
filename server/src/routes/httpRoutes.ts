@@ -10,6 +10,8 @@ export function registerHttpRoutes(router: Router) {
 
   router.post("/baskets/create/:endpoint", basketController.handleCreateNewBasket);
 
+  router.get("/:endpoint", basketController.handleSSEConnection);
+
   router.all("/:endpoint", basketController.handleWebhookRequest);
 
   router.put("/:endpoint/clear", basketController.handleClearBasket);

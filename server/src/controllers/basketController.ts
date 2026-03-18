@@ -1,6 +1,7 @@
-import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { mongoModel } from "../models/mongoModel.js";
 import { pgModel } from "../models/pgModel.js";
+import { sseManager } from "../services/sseManager.js";
 import type { RequestData } from "../types/requests.js";
 
 export const basketController = {
@@ -12,6 +13,25 @@ export const basketController = {
   // handleRedirectToBaskets(req: Request, res: Response) {
   //   res.redirect("/baskets");
   // },
+
+  handleSSEConnection(req: Request<{ endpoint: string }>, res: Response, next: NextFunction) {
+    if (!req.headers.accept?.includes("text/event-stream")) {
+      return next();
+    }
+
+    const { endpoint } = req.params;
+
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders();
+
+    sseManager.addClient(endpoint, res);
+
+    req.on("close", () => {
+      sseManager.removeClient(endpoint, res);
+    });
+  },
 
   async handleGetBasketRequests(req: Request<{ endpoint: string }>, res: Response) {
     const { endpoint } = req.params;
@@ -62,6 +82,7 @@ export const basketController = {
 
     try {
       await mongoModel.addWebhookRequest(data);
+      sseManager.broadcast(endpoint, data);
       res.status(200).json({ msg: "Webhook message received." });
     } catch (e) {
       console.error(e);

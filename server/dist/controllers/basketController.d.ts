@@ -1,5 +1,8 @@
-import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 export declare const basketController: {
+    handleSSEConnection(req: Request<{
+        endpoint: string;
+    }>, res: Response, next: NextFunction): void;
     handleGetBasketRequests(req: Request<{
         endpoint: string;
     }>, res: Response): Promise<void>;

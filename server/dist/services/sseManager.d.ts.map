@@ -1,0 +1,1 @@
+{"version":3,"file":"sseManager.d.ts","sourceRoot":"","sources":["../../src/services/sseManager.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAC;AAIxC,eAAO,MAAM,UAAU;wBACD,MAAM,OAAO,QAAQ;2BAOlB,MAAM,OAAO,QAAQ;wBAOxB,MAAM,QAAQ,OAAO;CAM1C,CAAC"}

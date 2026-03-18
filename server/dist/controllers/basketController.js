@@ -1,5 +1,6 @@
 import { mongoModel } from "../models/mongoModel.js";
 import { pgModel } from "../models/pgModel.js";
+import { sseManager } from "../services/sseManager.js";
 export const basketController = {
     // handleGetBaskets(req: Request, res: Response) {
     //   // Serve React app.
@@ -8,6 +9,20 @@ export const basketController = {
     // handleRedirectToBaskets(req: Request, res: Response) {
     //   res.redirect("/baskets");
     // },
+    handleSSEConnection(req, res, next) {
+        if (!req.headers.accept?.includes("text/event-stream")) {
+            return next();
+        }
+        const { endpoint } = req.params;
+        res.setHeader("Content-Type", "text/event-stream");
+        res.setHeader("Cache-Control", "no-cache");
+        res.setHeader("Connection", "keep-alive");
+        res.flushHeaders();
+        sseManager.addClient(endpoint, res);
+        req.on("close", () => {
+            sseManager.removeClient(endpoint, res);
+        });
+    },
     async handleGetBasketRequests(req, res) {
         const { endpoint } = req.params;
         try {
@@ -53,6 +68,7 @@ export const basketController = {
         };
         try {
             await mongoModel.addWebhookRequest(data);
+            sseManager.broadcast(endpoint, data);
             res.status(200).json({ msg: "Webhook message received." });
         }
         catch (e) {

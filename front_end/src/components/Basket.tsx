@@ -7,7 +7,7 @@ import { useSSE } from '../hooks/useSSE';
 export default function Basket() {
   const [requests, setRequests] = useState<Array<Request>>([]);
   let { url } = useParams();
-  const { newRequest } = useSSE(`http://localhost:3000/baskets/${url}`);
+  const { newRequest } = useSSE(`https://aj-fuhler.com/api/${url}`);
 
 
   useEffect(() => {
