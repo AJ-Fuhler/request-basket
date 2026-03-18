@@ -2,21 +2,17 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import RequestList from './RequestList.tsx';
 import type { Request } from '../types/Request';
-// import { useWebSocket } from '../hooks/useWebSocket';
+import { useSSE } from '../hooks/useSSE';
 
 export default function Basket() {
   const [requests, setRequests] = useState<Array<Request>>([]);
   let { url } = useParams();
-  // const { newRequest, sendMessage } = useWebSocket(`http://localhost:3000/baskets/${url}`);
+  const { newRequest } = useSSE(`http://localhost:3000/baskets/${url}`);
 
-  // function handleNewRequest() {
-  //   if (newRequest !== null) setRequests([...requests, newRequest]);
 
-  //   // what message should we actually send? Do we need to send a message?
-  //   sendMessage('GOT IT!');
-  // }
-
-  // useEffect(handleNewRequest, [newRequest]);
+  useEffect(() => {
+    if (newRequest !== null) setRequests((prev) => [...prev, newRequest]);
+  }, [newRequest]);
 
   function getRequests() {
     (async () => {
@@ -36,7 +32,7 @@ export default function Basket() {
     })();
   }
 
-  useEffect(getRequests, []);
+  useEffect(getRequests, [url]);
   
   async function handleClearBasket() {
     let options = {
