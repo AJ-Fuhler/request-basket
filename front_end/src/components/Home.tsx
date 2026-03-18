@@ -40,7 +40,7 @@ export default function Home() {
         console.log(token);
         localStorage.setItem(Object.keys(token)[0], Object.values(token)[0]);
         let urls: BasketUrls = {
-          viewBasket: `https://aj-fuhler.com/api/baskets/${basketName}`,
+          viewBasket: `https://aj-fuhler.com/baskets/${basketName}`,
           sendToBasket: `https://aj-fuhler.com/api/${basketName}`,
         }
         setUrls(urls);
