@@ -1,8 +1,28 @@
 import mongoose from "mongoose";
-// export { pool } from "./pgPool";
+import { Pool } from "pg";
+import dotenv from "dotenv";
+dotenv.config();
+const pgURI = process.env.PG_URI;
+if (!pgURI)
+    throw new Error('PG_URI not set in .env');
+const pool = new Pool({
+    connectionString: pgURI,
+});
 export async function connectDBs() {
-    await connectMongo();
-    console.log("MongoDB connected");
+    try {
+        await connectMongo();
+        console.log("MongoDB connected");
+    }
+    catch (error) {
+        console.error("Error connecting to MongoDB:", error);
+    }
+    try {
+        await pool.query('SELECT 1'); // Test PostgreSQL connection
+        console.log("PostgreSQL connected");
+    }
+    catch (error) {
+        console.error("Error connecting to PostgreSQL:", error);
+    }
 }
 async function connectMongo() {
     const mongoURI = process.env.MONGO_URI;
