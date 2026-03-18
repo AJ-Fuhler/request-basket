@@ -9,10 +9,7 @@ export const basketController = {
     // handleRedirectToBaskets(req: Request, res: Response) {
     //   res.redirect("/baskets");
     // },
-    handleSSEConnection(req, res, next) {
-        if (!req.headers.accept?.includes("text/event-stream")) {
-            return next();
-        }
+    handleSSEConnection(req, res) {
         const { endpoint } = req.params;
         res.setHeader("Content-Type", "text/event-stream");
         res.setHeader("Cache-Control", "no-cache");

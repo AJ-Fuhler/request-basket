@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from "express";
+import type { Request, Response } from "express";
 import { mongoModel } from "../models/mongoModel.js";
 import { pgModel } from "../models/pgModel.js";
 import { sseManager } from "../services/sseManager.js";
@@ -14,11 +14,7 @@ export const basketController = {
   //   res.redirect("/baskets");
   // },
 
-  handleSSEConnection(req: Request<{ endpoint: string }>, res: Response, next: NextFunction) {
-    if (!req.headers.accept?.includes("text/event-stream")) {
-      return next();
-    }
-
+  handleSSEConnection(req: Request<{ endpoint: string }>, res: Response) {
     const { endpoint } = req.params;
 
     res.setHeader("Content-Type", "text/event-stream");
