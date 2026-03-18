@@ -21,7 +21,7 @@ export default function Basket() {
   function getRequests() {
     (async () => {
       try {
-        let response = await fetch(`/api/baskets/${url}/`);
+        let response = await fetch(`https://aj-fuhler.com/api/baskets/${url}/`);
         if (response.ok) {
           setRequests(await response.json());
         } else {
@@ -44,7 +44,7 @@ export default function Basket() {
     };
 
     try {
-      const response = await fetch(`/api/${url}/clear`, options);
+      const response = await fetch(`https://aj-fuhler.com/api/${url}/clear`, options);
       if (!response.ok) {
         const { error } = await response.json();
         console.error(error);

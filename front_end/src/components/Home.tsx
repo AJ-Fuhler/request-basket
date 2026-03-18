@@ -33,15 +33,15 @@ export default function Home() {
     };
 
     try {
-      let response = await fetch(`/api/baskets/create/${basketName}`, options);
+      let response = await fetch(`https://aj-fuhler.com/api/baskets/create/${basketName}`, options);
       if (response.ok) {
         console.log('Basket successfully created');
         let token: BasketToken = await response.json();
         console.log(token);
         localStorage.setItem(Object.keys(token)[0], Object.values(token)[0]);
         let urls: BasketUrls = {
-          viewBasket: `/api/baskets/${basketName}`,
-          sendToBasket: `/api/${basketName}`,
+          viewBasket: `https://aj-fuhler.com/api/baskets/${basketName}`,
+          sendToBasket: `https://aj-fuhler.com/api/${basketName}`,
         }
         setUrls(urls);
         setVisibleModal(true);
