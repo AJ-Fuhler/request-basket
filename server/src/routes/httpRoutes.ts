@@ -17,4 +17,8 @@ export function registerHttpRoutes(router: Router) {
   router.all("/:endpoint", basketController.handleWebhookRequest);
 
   router.put("/:endpoint/clear", basketController.handleClearBasket);
+
+  router.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok" });
+  });
 }

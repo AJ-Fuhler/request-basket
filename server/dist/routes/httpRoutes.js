@@ -8,5 +8,8 @@ export function registerHttpRoutes(router) {
     router.get("/:endpoint/sse", basketController.handleSSEConnection);
     router.all("/:endpoint", basketController.handleWebhookRequest);
     router.put("/:endpoint/clear", basketController.handleClearBasket);
+    router.get("/health", (req, res) => {
+        res.status(200).json({ status: "ok" });
+    });
 }
 //# sourceMappingURL=httpRoutes.js.map
